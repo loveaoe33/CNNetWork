@@ -68,10 +68,10 @@ while True:
                
             if not Face_has_eyes:
                  '''cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2) 人臉附近畫框'''
-                                # 在人臉周圍繪製矩形框
-                    faces_without_eyes.append((x,y,w,h))
-                    print(ImagCheck(frame))
-                    messagebox.showinfo('提示','偵測到人臉'+ImagCheck(frame) )
+                 faces_without_eyes.append((x,y,w,h))
+                 print(ImagCheck(frame))
+                 messagebox.showinfo('提示','偵測到人臉'+ImagCheck(frame) )
+                 break
                 
                  
 

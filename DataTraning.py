@@ -10,6 +10,7 @@ import numpy as np
 import os
 import dlib
 import cv2
+face_cascade=cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 
 Trainfolder_path="C:/Zfn_Data"
 Testfolder_path="C:/test_Data"
@@ -19,6 +20,24 @@ train_labels=[]
 test_images=[]
 test_labels=[]
 
+def images_Process(Images):
+    Images=cv2.cvtColor(Images,cv2.COLOR_BGR2GRAY) 
+    """灰度轉換"""
+    ImageEqual=cv2.equalizeHist(Images) 
+    """直方圖均衡化"""
+    ImageFil=cv2.medianBlur(ImageEqual,5) 
+    """降噪"""
+    return ImageFil
+def images_FaceCatch(Images):
+    faces=face_cascade.detectMultiScale(Images,scaleFactor=1.1, minNeighbors=5, minSize=(30, 30))
+    if len(faces)>0:
+       (x,y,w,h)=faces[0]
+       FaceCatch=Images[y:y+h,x:x+w]
+       return cv2.cvtColor(FaceCatch, cv2.COLOR_BGR2RGB)
+    else:
+       return cv2.cvtColor(Images, cv2.COLOR_BGR2RGB)
+
+    
 
 def load_images_from_Testfolder(Testfolder_path,current_folder=""):
     global test_images
@@ -36,6 +55,8 @@ def load_images_from_Testfolder(Testfolder_path,current_folder=""):
      elif testfilename.endswith(image_extension):    
          if current_folder=="class1":
             image = cv2.imread(file_path)
+            image=images_Process(image)
+            image=images_FaceCatch(image)
             image = cv2.resize(image, (32, 32))
             image = image / 255.0
             test_images.append(image)
@@ -45,6 +66,8 @@ def load_images_from_Testfolder(Testfolder_path,current_folder=""):
 
          elif current_folder=="class2":
             image = cv2.imread(file_path)
+            image=images_Process(image)
+            image=images_FaceCatch(image)
             image = cv2.resize(image, (32, 32))
             image = image / 255.0
             test_images.append(image)
@@ -62,6 +85,8 @@ def load_images_from_TrainFolder(Trainfolder_path):
      if Trainfilename.endswith(image_extension):
         image_path=os.path.join(Trainfolder_path,Trainfilename)
         image=cv2.imread(image_path)
+        image=images_Process(image)
+        image=images_FaceCatch(image)
         image=cv2.resize(image,(32,32))
         image=image/255.0
         train_images.append(image)
@@ -98,16 +123,18 @@ print(len(test_labels))"""
 
     
 model=tf.keras.Sequential()
-model.add (layers.Conv2D(32,(2,2),activation='softmax',input_shape=(32,32,3)))  
+model.add (layers.Conv2D(32,(2,2),activation='relu',input_shape=(32,32,3)))  
 """32,3,3為32個濾波器與3x3大小的捲基層提取特徵  64,64,3為64*64並為3顏色層"""
 model.add (layers.MaxPooling2D((2,2)))
 model.add (layers.Conv2D(64,(2,2),activation='relu'))
-model.add(layers.Dropout(0.5))
+model.add(layers.Dropout(0.3))
 model.add (layers.MaxPooling2D((2,2)))
 model.add (layers.Conv2D(64,(2,2),activation='relu'))
-model.add(layers.Dropout(0.5))
+model.add(layers.Dropout(0.3))
 model.add (layers.MaxPooling2D((2,2)))
-
+model.add (layers.Conv2D(64,(2,2),activation='relu'))
+model.add(layers.Dropout(0.3))
+model.add (layers.MaxPooling2D((2,2)))
 
 
 
