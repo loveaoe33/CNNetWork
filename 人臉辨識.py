@@ -5,6 +5,9 @@ import tkinter as tk
 from tkinter import messagebox
 import tensorflow as tf
 import numpy as np
+import SocketConnection
+from SocketConnection import shared_variable
+import time
 
 """
 Created on Wed May 17 10:57:14 2023
@@ -24,6 +27,7 @@ y=500
 width=200
 height=200
 count=0
+Tag="fales"
 
 def ImagCheck(face_image):
     face_image=cv2.resize(face_image,(32,32))
@@ -31,7 +35,7 @@ def ImagCheck(face_image):
     Array_images=np.array(face_image)
     predictions=load_model.predict(face_image);
     predicted_class = np.argmax(predictions)  # 取得預測結果的類別索引
-    class_names =["身分確認","其他"]
+    class_names =["立帆","其他"]
     predicted_class_label=class_names[predicted_class]
     return predicted_class_label
 
@@ -42,7 +46,7 @@ def CatchImg(count):
     if count==100:
         messagebox.showinfo('提示', '以存滿一百張')
     
-while True:
+while (Tag!="done"):
     ret, frame=cap.read()
     
     if not ret:
@@ -67,13 +71,20 @@ while True:
                     break
                
             if not Face_has_eyes:
-                 '''cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2) 人臉附近畫框'''
-                 faces_without_eyes.append((x,y,w,h))
-                 print(ImagCheck(frame))
-                 messagebox.showinfo('提示','偵測到人臉'+ImagCheck(frame) )
-                 break
-                
-                 
+                '''cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2) 人臉附近畫框'''
+                faces_without_eyes.append((x,y,w,h))
+                print(ImagCheck(frame))
+                '''return結果'''
+                if(shared_variable=="FALSE"):
+                  Result = SocketConnection.main(ImagCheck(frame))
+                  time.sleep(2)
+                  Tag="done"
+              
+                print(Result)
+
+                messagebox.showinfo('提示',Result)
+                messagebox.showinfo('提示','偵測到人臉'+ImagCheck(frame))
+                break  
 
 
 

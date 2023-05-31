@@ -11,10 +11,12 @@ extra_dll_dir = os.path.join(os.path.dirname(__file__), '.libs')
 if sys.platform == 'win32' and os.path.isdir(extra_dll_dir):
     os.add_dll_directory(extra_dll_dir)
 
-openblas64__info={'library_dirs': ['D:\\a\\numpy\\numpy\\build\\openblas64__info'], 'libraries': ['openblas64__info'], 'language': 'f77', 'define_macros': [('HAVE_CBLAS', None), ('BLAS_SYMBOL_SUFFIX', '64_'), ('HAVE_BLAS_ILP64', None)]}
-blas_ilp64_opt_info={'library_dirs': ['D:\\a\\numpy\\numpy\\build\\openblas64__info'], 'libraries': ['openblas64__info'], 'language': 'f77', 'define_macros': [('HAVE_CBLAS', None), ('BLAS_SYMBOL_SUFFIX', '64_'), ('HAVE_BLAS_ILP64', None)]}
-openblas64__lapack_info={'library_dirs': ['D:\\a\\numpy\\numpy\\build\\openblas64__lapack_info'], 'libraries': ['openblas64__lapack_info'], 'language': 'f77', 'define_macros': [('HAVE_CBLAS', None), ('BLAS_SYMBOL_SUFFIX', '64_'), ('HAVE_BLAS_ILP64', None), ('HAVE_LAPACKE', None)]}
-lapack_ilp64_opt_info={'library_dirs': ['D:\\a\\numpy\\numpy\\build\\openblas64__lapack_info'], 'libraries': ['openblas64__lapack_info'], 'language': 'f77', 'define_macros': [('HAVE_CBLAS', None), ('BLAS_SYMBOL_SUFFIX', '64_'), ('HAVE_BLAS_ILP64', None), ('HAVE_LAPACKE', None)]}
+blas_armpl_info={}
+blas_mkl_info={'libraries': ['mkl_rt'], 'library_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\lib'], 'define_macros': [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)], 'include_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\include']}
+blas_opt_info={'libraries': ['mkl_rt'], 'library_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\lib'], 'define_macros': [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)], 'include_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\include']}
+lapack_armpl_info={}
+lapack_mkl_info={'libraries': ['mkl_rt'], 'library_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\lib'], 'define_macros': [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)], 'include_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\include']}
+lapack_opt_info={'libraries': ['mkl_rt'], 'library_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\lib'], 'define_macros': [('SCIPY_MKL_H', None), ('HAVE_CBLAS', None)], 'include_dirs': ['C:/Users/loveaoe33/anaconda3\\Library\\include']}
 
 def get_info(name):
     g = globals()

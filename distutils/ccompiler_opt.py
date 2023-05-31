@@ -252,7 +252,7 @@ class _Config:
         SSE3   = dict(interest=3, implies="SSE2", headers="pmmintrin.h"),
         SSSE3  = dict(interest=4, implies="SSE3", headers="tmmintrin.h"),
         SSE41  = dict(interest=5, implies="SSSE3", headers="smmintrin.h"),
-        POPCNT = dict(interest=6, implies="SSE41", headers="popcntintrin.h"),
+        POPCNT = dict(interest=6, implies="SSE41", headers="nmmintrin.h"),
         SSE42  = dict(interest=7, implies="POPCNT"),
         AVX    = dict(
             interest=8, implies="SSE42", headers="immintrin.h",
@@ -747,7 +747,7 @@ class _Distutils:
     def _dist_test_spawn(cmd, display=None):
         try:
             o = subprocess.check_output(cmd, stderr=subprocess.STDOUT,
-                                        universal_newlines=True)
+                                        text=True)
             if o and re.match(_Distutils._dist_warn_regex, o):
                 _Distutils.dist_error(
                     "Flags in command", cmd ,"aren't supported by the compiler"
@@ -959,8 +959,12 @@ class _CCompiler:
         detect_arch = (
             ("cc_on_x64",      ".*(x|x86_|amd)64.*", ""),
             ("cc_on_x86",      ".*(win32|x86|i386|i686).*", ""),
-            ("cc_on_ppc64le",  ".*(powerpc|ppc)64(el|le).*", ""),
-            ("cc_on_ppc64",    ".*(powerpc|ppc)64.*", ""),
+            ("cc_on_ppc64le",  ".*(powerpc|ppc)64(el|le).*|.*powerpc.*",
+                                          "defined(__powerpc64__) && "
+                                          "defined(__LITTLE_ENDIAN__)"),
+            ("cc_on_ppc64",    ".*(powerpc|ppc).*|.*powerpc.*",
+                                          "defined(__powerpc64__) && "
+                                          "defined(__BIG_ENDIAN__)"),
             ("cc_on_aarch64",  ".*(aarch64|arm64).*", ""),
             ("cc_on_armhf",    ".*arm.*", "defined(__ARM_ARCH_7__) || "
                                           "defined(__ARM_ARCH_7A__)"),
