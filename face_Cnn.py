@@ -45,53 +45,51 @@ def CatchImg(count):
     cv2.imwrite(fileName,frame);
     if count==100:
         messagebox.showinfo('提示', '以存滿一百張')
-    
-while (Tag!="done"):
-    ret, frame=cap.read()
+        
+while Tag != "done":
+    ret, frame = cap.read()
     
     if not ret:
         break
+    
     gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
     # 偵測人臉
-    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=10, minSize=(20, 20),maxSize=(300,300))
-    eyes=eye_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
+    faces = face_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=10, minSize=(20, 20), maxSize=(300,300))
+    eyes = eye_cascade.detectMultiScale(gray, scaleFactor=1.1, minNeighbors=5, minSize=(20, 20))
 
-   
-    if len(faces)>0:
+    if len(faces) > 0:
         print("偵測到人臉")
         cv2.rectangle(frame, (x, y), (x + width, y + height), (0, 255, 0), 2)
-        
-        for(x, y, w, h) in faces:
-            Face_has_eyes=False
-            
-            for(ex, ey, ew, eh) in eyes:
+
+        for (x, y, w, h) in faces:
+            Face_has_eyes = False
+
+            for (ex, ey, ew, eh) in eyes:
                 if ex > x and ey > y and ex + ew < x + w and ey + eh < y + h:
-                    Face_has_eyes=True
+                    Face_has_eyes = True
                     break
-               
+
             if not Face_has_eyes:
                 '''cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2) 人臉附近畫框'''
-                faces_without_eyes.append((x,y,w,h))
+                faces_without_eyes.append((x, y, w, h))
                 print(ImagCheck(frame))
                 '''return結果'''
-                if(shared_variable=="FALSE"):
-                  Result = SocketConnection.main(ImagCheck(frame))
-                  time.sleep(2)
-                  Tag="done"
-              
+                if shared_variable == "FALSE":
+                    Result = SocketConnection.main(ImagCheck(frame))
+                    time.sleep(2)
+                    Tag = "done"
+                
+            if Tag == "done":
+                split_Result = Result.split(",")
+                messagebox.showinfo('提示', '打卡完成' + split_Result[1])
                 print(Result)
 
-                messagebox.showinfo('提示',Result)
-                messagebox.showinfo('提示','偵測到人臉'+ImagCheck(frame))
-                break  
-
-
+            break  
 
     else:
         print("沒偵測到人臉")
         cv2.rectangle(frame, (0, 0), (frame.shape[1], frame.shape[0]), (0, 0, 255), 2)
-
 
     # 顯示影格
     cv2.imshow('Face Detection', frame)
@@ -99,9 +97,10 @@ while (Tag!="done"):
     # 按下 'q' 鍵結束程式
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
-    time.sleep(0.1)
+
+    
+
 
 # 釋放攝影機資源
 cap.release()
 cv2.destroyAllWindows()
-    

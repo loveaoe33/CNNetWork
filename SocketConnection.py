@@ -1,43 +1,46 @@
 import asyncio
 import socket as sock
+import GUIMain
+import traceback
+import tkinter as tk
+
+
 
 shared_variable = "FALSE"
 ResponseText = ""
 
 
-async def async_Socket(SocketMessage):
-    host = "localhost"
-    port = 8888
-    s = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
-    s.connect((host, port))
-    print('Python Client: Connected to Java server.')
-    message = SocketMessage
-    byte_data = message.encode()
-    s.send(byte_data)
-    response = s.recv(1024).decode()
-    print("FromJavaMessage", response)
-    global shared_variable
-    shared_variable = "TRUE"
+def async_Socket(SocketMessage):
     global ResponseText
-    ResponseText = response
-    s.close()
+    try:
+        host = "localhost"
+        port = 8888
+        s = sock.socket(sock.AF_INET, sock.SOCK_STREAM)
+        s.connect((host, port))
+        print('Python Client: Connected to Java server.')
+        message = SocketMessage
+        byte_data = message.encode()
+        s.send(byte_data)
+        response = s.recv(1024).decode()
+        print("FromJavaMessage", response)
+        ResponseText = response
+        GUIMain.text_Response.insert(tk.END, "Socket連接成功\n")
+        s.close()
+    except Exception as e:
+        ResponseText=""
+        GUIMain.text_Response.insert(tk.END, traceback.format_exc() + "\n")
 
 
-async def async_Operation(SocketMessage):
-    await async_Socket(SocketMessage)
-    await asyncio.sleep(0.5)
-    global shared_variable
-    shared_variable = "FALSE"
-    return "done," + ResponseText
-
-
-async def main(SocketMessage):
-    await async_Operation(SocketMessage)
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    if loop.is_running():
-        loop.create_task(main("asdd"))
+def async_Operation(SocketMessage):
+    global ResponseText
+    async_Socket(SocketMessage)
+    if ResponseText=="":
+        return ""
     else:
-        asyncio.run(main("asds"), debug=True)
+        return "done," + ResponseText
+
+
+def main(SocketMessage):
+     return  async_Operation(SocketMessage)
+      
+
