@@ -15,6 +15,7 @@ async def async_op():
     
 async def main():
     print("主程式開始")
+    await asyncio.sleep(3)
     print("主程式結束")
 
 async def test():

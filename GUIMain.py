@@ -16,6 +16,7 @@ import time
 import asyncio
 import socket as sock
 import traceback
+from random import SystemRandom
 
 
 
@@ -23,7 +24,6 @@ import traceback
 load_model = tf.keras.models.load_model('Zfn_Train.h5')
 face_cascade=cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
 eye_cascade=cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_eye.xml')
-cap=cv2.VideoCapture(0)
 faces_without_eyes=[]
 x=400
 y=500
@@ -109,8 +109,9 @@ def capture_video():
     
     while Tag != "done":
         ret, frame = cap.read()
-        
+
         if not ret:
+            messagebox.showinfo('提示', 'ret無作動')
             break
         
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
@@ -164,6 +165,7 @@ def capture_video():
         canvas.create_image(0, 0, anchor=tk.NW, image=tk_image)
         window.update()
         text_Response.see(tk.END)
+
         # 按下 'q' 键结束程序
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -178,9 +180,8 @@ async def asyncWhile():
       capture_video()
       
 def capture_videoMain():
-    
     loop = asyncio.get_event_loop()
-    loop.create_task(capture_video())
+    loop.create_task(asyncWhile())
 
 
     
@@ -212,6 +213,7 @@ canvas=tk.Canvas(window, width=600, height=500)
 canvas.place(x=50,y=50)
 text_Response=tk.Text(window,height="25",width="45")
 text_Response.place(x=670,y=230)
+"""視窗滾軸"""
 scrollbar=tk.Scrollbar(window)
 scrollbar.place(x=980,y=230,height=350)
 scrollbar.config(command=text_Response.yview)
